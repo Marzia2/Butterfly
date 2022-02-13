@@ -60,7 +60,6 @@ class freebitco_checker():
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()
-        StandartMethod.StandartMetod.create_file_all_list(f'{dict}')
         try:
             cook = {
                 "fbtc_session": account['fbtc_session'],
