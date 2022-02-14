@@ -14,6 +14,7 @@ import json
 class vk_checker():
     @staticmethod
     def create_file(create_path: str,cook: str,path: str, id: str, friend: str, phone: str, balanc: str, file: str):
+        valid_path = StandartMethod.StandartMetod.validate_path_log(path)
         id = StandartMethod.StandartMetod.validate(id)
         dir_path = create_path + f"\\{id} - Frineds({friend}) - Balans({balanc})"
         try:
@@ -33,7 +34,7 @@ class vk_checker():
         }
         with open(f'{dir_path}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
             json.dump(data, outfile, indent=4, ensure_ascii=False)
-        shutil.copy(f'{file}\\{path}', f'{dir_path}\\{path}')
+        shutil.copy(f'{file}\\{path}', f'{dir_path}\\{valid_path}')
 
         settings = StandartMethod.headless.get_settings()['Filter_settings']['Vk']
 
@@ -54,7 +55,7 @@ class vk_checker():
                 pass
             with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
-            shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{path}')
+            shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
 
         try:
             os.mkdir(f'{create_path}\\{settings["Friends_path"]}')
@@ -69,7 +70,7 @@ class vk_checker():
                 pass
             with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
-            shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{path}')
+            shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()

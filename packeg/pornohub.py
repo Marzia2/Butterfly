@@ -16,6 +16,7 @@ class pornohub_checker():
 
 	@staticmethod
 	def create_file(create_path: str,cook: str, path: str, nick: str, link: str, meta:list, prem: bool, file: str):
+		valid_path = StandartMethod.StandartMetod.validate_path_log(path)
 		nick = StandartMethod.StandartMetod.validate(nick)
 		dir_path = create_path + f"\\{nick} - Premium({str(prem)})"
 		try:
@@ -34,7 +35,7 @@ class pornohub_checker():
 		}
 		with open(f'{dir_path}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
 			json.dump(data, outfile, indent=4, ensure_ascii=False)
-		shutil.copy(f'{file}\\{path}', f'{dir_path}\\{path}')
+		shutil.copy(f'{file}\\{path}', f'{dir_path}\\{valid_path}')
 
 		settings = StandartMethod.headless.get_settings()['Filter_settings']['PornoHub']
 
@@ -55,8 +56,8 @@ class pornohub_checker():
 				pass
 			with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
 				json.dump(data, outfile, indent=4, ensure_ascii=False)
-			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{path}')
-		shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{path}')
+			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
+		shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{valid_path}')
 	@staticmethod
 	def checker(dict, account, path_log, file):
 		headers = StandartMethod.StandartMetod.get_headers()

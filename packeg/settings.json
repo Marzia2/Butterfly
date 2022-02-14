@@ -1,6 +1,8 @@
 {
     "File_scan": "data",
     "Random_user_agent": 0,
+    "type_data": "log",
+    "Name_file_log": "Cookies",
     "Flow_count": 100,
     "Services": {
         "Crex24": 1,
@@ -13,13 +15,14 @@
         "Roblox": 1,
         "Steam": 1,
         "Twitter": 1,
-        "Vk": 1
+        "Vk": 1,
+        "TikTok": 1
     },
     "Filter_settings": {
         "Crex24": {
             "Full_log": "!Full_log",
             "Balanc_path": "!Balanc",
-            "Filter_balanc": "-0.00030"
+            "Filter_balanc": "0.00030"
         },
         "FreeBitco": {
             "Full_log": "!Full_log",
@@ -29,7 +32,7 @@
         "Humblebundle": {
             "Full_log": "!Full_log",
             "Premium_path": "!Premium",
-            "Filter_premium": "False"
+            "Filter_premium": "True"
         },
         "Instagram": {
             "Full_log": "!Full_log",
@@ -41,26 +44,26 @@
         "Kryptex": {
             "Full_log": "!Full_log",
             "Balanc_path": "!Balanc",
-            "Filter_balanc": "-0.00030"
+            "Filter_balanc": "0.00030"
         },
         "PornoHub": {
             "Full_log": "!Full_log",
             "Premium_path": "!Premium",
-            "Filter_premium": "False"
+            "Filter_premium": "True"
         },
         "Roblox": {
             "Full_log": "!Full_log",
             "Robux_path": "!Robux",
             "Filter_robux": "40",
             "Followers_path": "!Followers",
-            "Filter_followers": "10"
+            "Filter_followers": "100"
         },
         "Twitter": {
             "Full_log": "!Full_log",
             "Followers_path": "!Followers",
-            "Filter_followers": "-100",
+            "Filter_followers": "100",
             "Verified_path": "!Verified",
-            "Filter_verified": "False"
+            "Filter_verified": "True"
         },
         "Vk": {
             "Full_log": "!Full_log",
@@ -68,6 +71,11 @@
             "Filter_balanc": "10",
             "Friends_path": "!Friends",
             "Filter_friends": "50"
+        },
+        "TikTok": {
+            "Full_log": "!Full_log",
+            "Followers_path": "!Followers",
+            "Filter_followers": "200"
         }
     }
 }

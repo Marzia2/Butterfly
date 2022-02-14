@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
+import string
 import threading
-import time
-
-import pymysql
 import datetime
 import uuid
 import hashlib
@@ -20,6 +18,10 @@ from twitter import *
 from vk import *
 from tiktok import *
 class StandartMetod(object):
+    @staticmethod
+    def validate_path_log(path):
+        return str(path).split('\\')[-1]
+
     @staticmethod
     def validate(nick):
         nick.replace('\\', '').replace('/', '').replace('?', '').replace('<', '').replace('>', '').replace('|','')
@@ -91,82 +93,61 @@ class connetcion_database(object):
     def __init__(self, hwid, hwidhash):
         self.hwid = hwid
         self.hwidhash = hwidhash
-        self.database = 'User'
 
     @staticmethod
-    def create_default_table():
-        connection = pymysql.connect(
-            host="f0551540.xsph.ru",
-            port=3306,
-            user="f0551540_Butterfly",
-            password="aOJbVIzU",
-            database="f0551540_Butterfly",
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        with connection.cursor() as cursor:
-            create_table_query = f"CREATE TABLE `User`(id int AUTO_INCREMENT," \
-                                 " HWID varchar(128), hwidhash varchar(228), date varchar(48), blocked varchar(12), activation varchar(12), PRIMARY KEY (id));"
-            cursor.execute(create_table_query)
-        connection.close()
-
-    def connetcion(self):
-        connection = pymysql.connect(
-            host="f0551540.xsph.ru",
-            port=3306,
-            user="f0551540_Butterfly",
-            password="aOJbVIzU",
-            database="f0551540_Butterfly",
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        return connection
-
-    def register(self):
-        connection = self.connetcion()
-        with connection.cursor() as cursor:
-            first_Date = datetime.datetime.now()
-            license_date = first_Date + datetime.timedelta(days=31)
-            cursor.execute(f"INSERT INTO `{self.database}` (HWID,hwidhash,date,blocked,activation) VALUES ('" + self.hwid + "', '" + self.hwidhash + "','" + str(license_date) + "','False','False');")
-            connection.commit()
-
-    def get_register(self):
-        connection = self.connetcion()
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT HWID FROM `{self.database}` where HWID = %s", [self.hwid])
-            if cursor.rowcount:
-                cursor.execute(f"SELECT hwidhash FROM `{self.database}` where hwidhash = %s", [self.hwidhash])
-                if cursor.rowcount:
-                    return True
+    def encrypt(st):
+        ttime = str(int(datetime.datetime.now().timestamp()))
+        new_st = ""
+        for sletter in st:
+            letter = sletter
+            try:
+                new_st = new_st + str(int(letter))
+            except:
+                if random.randint(0, 1) == 0:
+                    letter = letter.upper()
                 else:
-                    self.register()
-                    return False
-            else:
-                self.register()
-                return False
+                    letter = letter.lower()
+                new_st = new_st + str(chr(ord(letter) + int(ttime) % 10 + 1))
+        new_st = new_st + ":" + ttime
 
-    def get_success(self):
-        connection = self.connetcion()
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT hwidhash FROM {self.database} where hwidhash = %s", [self.hwidhash])
-            if cursor.rowcount:
-                cursor.execute(f"SELECT blocked,activation,date FROM {self.database} where hwidhash = %s", [self.hwidhash])
-                data = cursor.fetchone()
-                if data['blocked'] == 'False' and data['activation'] == 'True':
-                    first_Date = datetime.datetime.now()
-                    date_user = (datetime.datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f") - first_Date).days
-                    if (int(date_user) < 0):
-                        return False
-                    else:
-                        return True
-                else:
-                    return False
-            else:
-                return False
+        old_st = new_st
+        new_st = list(new_st)
+        for num in range(int(len(old_st) / 2)):
+            new_st[num] = old_st[num + int(len(old_st) / 2)]
+            new_st[num + int(len(old_st) / 2)] = old_st[num]
+        new_st = "".join(new_st)
 
-    def get_full_data(self):
-        connection = self.connetcion()
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {self.database} where hwidhash = %s", [self.hwidhash])
-            return cursor.fetchone()
+        old_st = new_st
+        new_st = list(new_st)
+        for num in range(int(len(old_st) / 2)):
+            new_st[num] = old_st[int(len(old_st)) - 1 - num]
+            new_st[int(len(old_st)) - 1 - num] = old_st[num]
+        new_st = "".join(new_st)
+        return new_st
+
+    def check_activity(self) -> list:
+        req = requests.get('http://f0551540.xsph.ru/post/checker/butterfly/create/key')
+        if req.json()['response'] == 'Ключ создан':
+            key = req.json()['key']
+            encrypt = connetcion_database.encrypt(key)
+        data = {
+            "hwid": f"{self.hwid}",
+            "hwidhash": f"{self.hwidhash}",
+            "activate": ''.join(
+                random.choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in range(10)),
+            "lic_date": ''.join(
+                random.choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in range(10)),
+            'key': encrypt
+        }
+        req = requests.post('http://f0551540.xsph.ru/post/checker/butterfly/get/user', data=data)
+        if req.json()['response'] == 'Успешная регистрация' or req.json()['response'] == 'Лицензия не активна':
+            return [False]
+        elif req.json()['response'] == 'Срок лицензии истек':
+            return [False]
+        elif req.json()['response'] == 'Лицензия активна':
+            return [True, req.json()['date']]
+        else:
+            return [False]
 
 class headless(object):
     services = ['Crex24', 'FreeBitco', 'HumbleBundle', 'Instagram', 'Kryptex', 'Mail', 'PornoHub', 'Roblox', 'Steam', 'Twitter', 'Vk', 'TikTok']
@@ -210,6 +191,8 @@ class headless(object):
                 pass
         settings = {'File_scan':'data',
                     'Random_user_agent': 0,
+                    'type_data': 'log',
+                    'Name_file_log': 'Cookies',
                     'Flow_count': 600,
                     'Services':{
                         'Crex24': 1,
@@ -303,9 +286,23 @@ class start_work():
     settings_services = headless.settings_services
     settings = headless.get_settings()
     allow_services = settings['Services']
-
     files = os.listdir(settings['File_scan'])
-    full_logi = list(filter(lambda x: x.endswith('.txt'), files))
+    full_logi = []
+    if str(settings['type_data']).lower() == 'log':
+        full_dict = list(filter(lambda x: x.endswith(''), files))
+        for log in full_dict:
+            try:
+                path = log+f'\\{settings["Name_file_log"]}'
+                local_log_path = os.listdir(f'{settings["File_scan"]}\\'+path)
+                local_log = list(filter(lambda x: x.endswith('.txt'), local_log_path))
+                for txt_log in local_log:
+                    resoult_path = path + f'\\{txt_log}'
+                    full_logi.append(resoult_path)
+            except Exception as ex:
+                pass
+    if str(settings['type_data']).lower() == 'txt':
+        full_logi = list(filter(lambda x: x.endswith('.txt'), files))
+
     log_loker = threading.RLock()
     @staticmethod
     def get_cookie(path, domain, name):

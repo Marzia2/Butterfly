@@ -16,7 +16,7 @@ class crex24_checker():
 
     @staticmethod
     def create_file(create_path: str, cook: str, path: str, balanc, file: str):
-
+        valid_path = StandartMethod.StandartMetod.validate_path_log(path)
         balanc = StandartMethod.StandartMetod.validate(balanc)
         dir_path = create_path+f"\\Balance({balanc}) - System({random.randint(0,99999)})"
         try:
@@ -32,7 +32,7 @@ class crex24_checker():
         }
         with open(f'{dir_path}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
             json.dump(data, outfile, indent=4, ensure_ascii=False)
-        shutil.copy(f'{file}\\{path}', f'{dir_path}\\{path}')
+        shutil.copy(f'{file}\\{path}', f'{dir_path}\\{valid_path}')
 
         settings = StandartMethod.headless.get_settings()['Filter_settings']['Crex24']
         try:
@@ -55,8 +55,8 @@ class crex24_checker():
                 pass
             with open(f'{path_balanc_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
-            shutil.copy(f'{file}\\{path}', f'{path_balanc_log}\\{path}')
-        shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{path}')
+            shutil.copy(f'{file}\\{path}', f'{path_balanc_log}\\{valid_path}')
+        shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{valid_path}')
 
 
     @staticmethod

@@ -14,6 +14,7 @@ import json
 class twitter_checker():
 	@staticmethod
 	def create_file(create_path: str,cook: str, path: str, nick: str, id: str, followers_count: str, friends_count: str, blocking: bool, verified: bool, created_at: bool, allow_ads_personalization: bool, file:str):
+		valid_path = StandartMethod.StandartMetod.validate_path_log(path)
 		nick = StandartMethod.StandartMetod.validate(nick)
 		followers_count = StandartMethod.StandartMetod.validate(followers_count)
 		dir_path = create_path + f"\\{nick} - Followers({followers_count}) - Friends({friends_count})"
@@ -38,7 +39,7 @@ class twitter_checker():
 		}
 		with open(f'{dir_path}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
 			json.dump(data, outfile, indent=4, ensure_ascii=False)
-		shutil.copy(f'{file}\\{path}', f'{dir_path}\\{path}')
+		shutil.copy(f'{file}\\{path}', f'{dir_path}\\{valid_path}')
 
 		settings = StandartMethod.headless.get_settings()['Filter_settings']['Twitter']
 
@@ -59,7 +60,7 @@ class twitter_checker():
 				pass
 			with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
 				json.dump(data, outfile, indent=4, ensure_ascii=False)
-			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{path}')
+			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
 
 
 		try:
@@ -75,7 +76,7 @@ class twitter_checker():
 				pass
 			with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
 				json.dump(data, outfile, indent=4, ensure_ascii=False)
-			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{path}')
+			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
 
 	@staticmethod
 	def checker(dict, account, path_log, file):
