@@ -437,6 +437,7 @@ class start_work():
         steam_cookie, vk_cookie, crex24_cookie, freebitco_cookie, tiktok_cookie = {}, {}, {}, {}, {}
         while True:
             if changer_log:
+                stop = 0
                 if cls.full_logi:
                     with cls.log_loker:
                         log = random.choice(cls.full_logi)
