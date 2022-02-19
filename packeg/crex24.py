@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import shutil
+import threading
 
 import StandartMethod
 import re
@@ -58,11 +59,13 @@ class crex24_checker():
             shutil.copy(f'{file}\\{path}', f'{path_balanc_log}\\{valid_path}')
         shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{valid_path}')
 
+        print(f"\n[{threading.current_thread().name}] Crex24 Обнаружена валидная сессия\n"
+              f"[{threading.current_thread().name}] Баланс: {balanc}\n"
+              f"[{threading.current_thread().name}] Путь: {dir_path}")
 
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()
-        StandartMethod.StandartMetod.create_file_all_list(f'{dict}')
         cook = {
             "connect.sid": account['connect.sid'],
         }
@@ -70,7 +73,6 @@ class crex24_checker():
         try:
             soup = BeautifulSoup(req.text, 'lxml')
             balans = soup.find('span', class_='currency--TgdVYHk05X0vANegUL0gu').text
-
             crex24_checker.create_file(f'{dict}',account['connect.sid'], path_log , balans, file)
         except Exception as ex:
             pass

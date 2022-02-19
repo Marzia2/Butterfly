@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import threading
+
 import StandartMethod
 import re
 import random
@@ -40,6 +42,10 @@ class steam_checker():
             with open(f'{create_path}\\{cook[:7:]} - {balans} - {lvl}.json', 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
 
+        print(f"\n[{threading.current_thread().name}] Steam Обнаружена валидная сессия\n"
+              f"[{threading.current_thread().name}] Баланс: {balans}\n"
+              f"[{threading.current_thread().name}] Уровень: {lvl}\n"
+              f"[{threading.current_thread().name}] Путь: {create_path}\\{name_file}")
     @staticmethod
     def checker(dict, account, path_log):
         headers = StandartMethod.StandartMetod.get_headers()

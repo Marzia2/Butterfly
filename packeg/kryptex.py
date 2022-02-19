@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import shutil
+import threading
 
 import StandartMethod
 import re
@@ -59,6 +60,11 @@ class kryptex_checker():
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
             shutil.copy(f'{file}\\{path}', f'{path_balanc_log}\\{valid_path}')
         shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{valid_path}')
+
+        print(f"\n[{threading.current_thread().name}] Kryptex Обнаружена валидная сессия\n"
+              f"[{threading.current_thread().name}] Баланс: {balanc}\n"
+              f"[{threading.current_thread().name}] Путь: {dir_path}")
+
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()

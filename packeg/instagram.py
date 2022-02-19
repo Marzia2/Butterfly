@@ -2,6 +2,7 @@
 import re
 import random
 import shutil
+import threading
 import time
 import requests
 from bs4 import BeautifulSoup
@@ -79,6 +80,13 @@ class instagram_checker():
             shutil.copy(f'{file}\\{path}', f'{path_balanc_log}\\{valid_path}')
 
         shutil.copy(f'{file}\\{path}', f'{create_path}\\{settings["Full_log"]}\\{valid_path}')
+
+        print(f"\n[{threading.current_thread().name}] Instagram Обнаружена валидная сессия\n"
+              f"[{threading.current_thread().name}] Ник: {nick}\n"
+              f"[{threading.current_thread().name}] Фолловеры: {subscribers}\n"
+              f"[{threading.current_thread().name}] Бизнес аккаунт: {business_account}\n"
+              f"[{threading.current_thread().name}] Путь: {dir_path}")
+
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()

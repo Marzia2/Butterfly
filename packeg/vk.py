@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import shutil
+import threading
 
 import StandartMethod
 import re
@@ -71,6 +72,13 @@ class vk_checker():
             with open(f'{path_premium_log}\\MainInfo.json', 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
             shutil.copy(f'{file}\\{path}', f'{path_premium_log}\\{valid_path}')
+
+
+        print(f"\n[{threading.current_thread().name}] Vk Обнаружена валидная сессия\n"
+              f"[{threading.current_thread().name}] Ник: {id}\n"
+              f"[{threading.current_thread().name}] Баланс: {balanc}\n"
+              f"[{threading.current_thread().name}] Друзей: {friend}\n"
+              f"[{threading.current_thread().name}] Путь: {dir_path}")
     @staticmethod
     def checker(dict, account, path_log, file):
         headers = StandartMethod.StandartMetod.get_headers()

